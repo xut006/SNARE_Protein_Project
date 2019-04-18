@@ -2,6 +2,19 @@ import numpy as np
 import requests
 from bs4 import BeautifulSoup as BS
 
+
+# downloadProteinID function 
+# input: 
+#   None
+# output:
+#   the name of the file contains a list of proteins IDs downloaded from InterPro
+def downloadProteinID ():
+  url = "http://www.ebi.ac.uk/interpro/entry/IPR010989/proteins-matched?taxonomy=2&export=ids"
+  r = requests.get(url, allow_redirects=True)
+  open("SNARE_proteins_bacteria.txt", 'wb').write(r.content)
+  return "SNARE_proteins_bacteria.txt"
+
+
 # getProteinID function 
 # input: 
 #   filename: string 
@@ -60,17 +73,17 @@ def queryOrg (queryName, orgFile):
       return True
   return False
   
+
+
    
-
-
 # protein ids download from InterPor
-proteinIDs = "SNARE_proteins_bacteria.txt"
+proteinIDs = downloadProteinID ()
 # get organism names from Uniport
 searchUniport(proteinIDs)
 # Determine if TB is in the orgnanism list
 query = "Mycobacterium tuberculosis"
 organism = "organism.txt"
-#result = queryOrg(query, organism)
-#print (result)
+result = queryOrg(query, organism)
+print (result)
 
 
