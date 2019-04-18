@@ -23,16 +23,23 @@ def getProteinID (filename):
 #   filename: string
 #             the filename of a list of Protein ids 
 # output:
-#   a file with all the organism names matched to the protein ids
+#   a file with all the organism names matched to the protein ids and the
+#   corresponding freqency of apperance
 def searchUniport (filename):
   outFile = open("organism.txt", "w")
   proteinIDs = open(filename, "r")
+  orgDic = {}
   for protein in proteinIDs:
     text = requests.get('http://www.uniprot.org/uniprot/' + protein).text
     soup = BS(text)
     title = soup.head.title.text
     organism = title.split(" - ")[2]
-    outFile.write(organism + "\n")
+    if organism in orgDic:
+      orgDic[organism] = orgDic[organism] + 1
+    else:
+      orgDic[organism] = 1
+  for org_freqs in sorted(orgDic, key=orgDic.get, reverse=True):
+    outFile.write(str(orgDic[org_freqs]) + " " + org_freqs + "\n")
 
 
 # queryOrg function
@@ -63,7 +70,7 @@ searchUniport(proteinIDs)
 # Determine if TB is in the orgnanism list
 query = "Mycobacterium tuberculosis"
 organism = "organism.txt"
-result = queryOrg(query, organism)
-print (result)
+#result = queryOrg(query, organism)
+#print (result)
 
 
