@@ -31,14 +31,45 @@ def getProteinID (filename):
   return IDs
 
 
-# searchUniport function
+# searchUniport_stable function
 # input:
 #   filename: string
 #             the filename of a list of Protein ids 
 # output:
 #   a file with all the organism names matched to the protein ids and the
 #   corresponding freqency of apperance
-def searchUniport (filename):
+# SideNote: This function accomplish the smae goal as searchUniport_fast, but
+#           this function accomplish the goal with uniprot api, where the 
+#           result is stable but rather slow, which could take up to 10 mins.
+def searchUniport_stable (filename):
+  outFile = open("organism.txt", "w")
+  proteinIDs = open(filename, "r")
+  orgDic = {}
+  for protein in proteinIDs:
+    url = "https://www.uniprot.org/uniprot/?query=id:" + protein + "&columns=organism&format=tab"
+    print("before")
+    result = requests.get(url).content
+    print ("after")
+    organism = str(result).split("\\n")[1]
+    if organism in orgDic:
+      orgDic[organism] = orgDic[organism] + 1
+    else:
+      orgDic[organism] = 1
+  for org_freqs in sorted(orgDic, key=orgDic.get, reverse=True):
+    outFile.write(str(orgDic[org_freqs]) + " " + org_freqs + "\n")
+
+
+# searchUniport_fast function
+# input:
+#   filename: string
+#             the filename of a list of Protein ids 
+# output:
+#   a file with all the organism names matched to the protein ids and the
+#   corresponding freqency of apperance
+# SideNote: This function accomplish the smae goal as searchUniport_stable, but
+#           accomplish the goal with python's BeautifulSoup package, where the 
+#           result could be unstable but faster than using Uniport API. 
+def searchUniport_fast (filename):
   outFile = open("organism.txt", "w")
   proteinIDs = open(filename, "r")
   orgDic = {}
@@ -80,6 +111,7 @@ def queryOrg (queryName, orgFile):
 proteinIDs = downloadProteinID ()
 # get organism names from Uniport
 searchUniport(proteinIDs)
+searchUniport("SNARE_proteins_bacteria.txt")
 # Determine if TB is in the orgnanism list
 query = "Mycobacterium tuberculosis"
 organism = "organism.txt"
