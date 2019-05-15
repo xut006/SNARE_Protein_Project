@@ -111,11 +111,11 @@ def queryOrg (queryName, orgFile):
 proteinIDs = downloadProteinID ()
 # get organism names from Uniport
 searchUniport(proteinIDs)
-searchUniport("SNARE_proteins_bacteria.txt")
+#searchUniport("SNARE_proteins_bacteria.txt")
 # Determine if TB is in the orgnanism list
 query = "Mycobacterium tuberculosis"
 organism = "organism.txt"
 result = queryOrg(query, organism)
-print (result)
+print ("Mycobacterium tuberculosis is in the name list: " + str(result))
 
 
